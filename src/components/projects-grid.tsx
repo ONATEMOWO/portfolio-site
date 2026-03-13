@@ -30,6 +30,22 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
   const [activeSkill, setActiveSkill] = useState<string>("All");
   const [openSlug, setOpenSlug] = useState<string | null>(null);
 
+  function handleProjectPointerMove(event: PointerEvent<HTMLElement>) {
+    if (event.pointerType !== "mouse") return;
+    const card = event.currentTarget;
+    const bounds = card.getBoundingClientRect();
+    const x = event.clientX - bounds.left;
+    const y = event.clientY - bounds.top;
+    card.style.setProperty("--spotlight-x", `${x}px`);
+    card.style.setProperty("--spotlight-y", `${y}px`);
+  }
+
+  function resetProjectPointer(event: PointerEvent<HTMLElement>) {
+    const card = event.currentTarget;
+    card.style.setProperty("--spotlight-x", "50%");
+    card.style.setProperty("--spotlight-y", "50%");
+  }
+
   const skills = useMemo(() => {
     const all = projects.flatMap((project) => project.tech);
     return Array.from(new Set(all)).sort();
@@ -41,22 +57,6 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
     if (activeSkill === "All") return projects;
     return projects.filter((project) => project.tech.includes(activeSkill));
   }, [activeSkill, projects]);
-
-  function handlePointerMove(event: PointerEvent<HTMLElement>) {
-    const target = event.currentTarget;
-    if (event.pointerType !== "mouse") return;
-    const rect = target.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    target.style.setProperty("--px", `${x}px`);
-    target.style.setProperty("--py", `${y}px`);
-  }
-
-  function handlePointerLeave(event: PointerEvent<HTMLElement>) {
-    const target = event.currentTarget;
-    target.style.setProperty("--px", `-100px`);
-    target.style.setProperty("--py", `-100px`);
-  }
 
   return (
     <div className="projects-wrap">
@@ -90,12 +90,13 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
             key={project.slug}
             className="project-card reveal"
             style={{ "--delay": `${160 + index * 80}ms` } as CSSProperties}
-            onPointerMove={handlePointerMove}
-            onPointerLeave={handlePointerLeave}
+            onPointerMove={handleProjectPointerMove}
+            onPointerLeave={resetProjectPointer}
           >
             <div className="project-preview">
               <div className="project-preview-bar" />
               <div className="project-preview-lines" />
+              <div className="project-preview-pulse" />
             </div>
             <div className="card-head">
               <div>
@@ -129,23 +130,23 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
               </button>
               {openSlug === project.slug && (
                 <div id={`case-${project.slug}`} className="case-lines">
-                <div>
-                  <p className="meta">Context</p>
-                  <p className="section-note">{project.caseStudy.context}</p>
+                  <div>
+                    <p className="meta">Context</p>
+                    <p className="section-note">{project.caseStudy.context}</p>
+                  </div>
+                  <div>
+                    <p className="meta">Challenge</p>
+                    <p className="section-note">{project.caseStudy.challenge}</p>
+                  </div>
+                  <div>
+                    <p className="meta">Solution</p>
+                    <p className="section-note">{project.caseStudy.solution}</p>
+                  </div>
+                  <div>
+                    <p className="meta">Outcome</p>
+                    <p className="section-note">{project.caseStudy.outcome}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="meta">Challenge</p>
-                  <p className="section-note">{project.caseStudy.challenge}</p>
-                </div>
-                <div>
-                  <p className="meta">Solution</p>
-                  <p className="section-note">{project.caseStudy.solution}</p>
-                </div>
-                <div>
-                  <p className="meta">Outcome</p>
-                  <p className="section-note">{project.caseStudy.outcome}</p>
-                </div>
-              </div>
               )}
             </div>
             <Link className="text-link" href={`/projects#${project.slug}`}>

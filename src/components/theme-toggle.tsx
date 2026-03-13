@@ -1,9 +1,10 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
+const THEME_EVENT = "portfolio-theme-change";
 
 function getPreferredTheme(): Theme {
   if (typeof window === "undefined") return "light";
@@ -12,20 +13,44 @@ function getPreferredTheme(): Theme {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
+function subscribe(onStoreChange: () => void) {
+  if (typeof window === "undefined") return () => undefined;
+
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  const handleMediaChange = () => {
+    if (!window.localStorage.getItem("theme")) {
+      onStoreChange();
+    }
+  };
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key === "theme") {
+      onStoreChange();
+    }
+  };
+
+  media.addEventListener?.("change", handleMediaChange);
+  window.addEventListener("storage", handleStorage);
+  window.addEventListener(THEME_EVENT, onStoreChange);
+
+  return () => {
+    media.removeEventListener?.("change", handleMediaChange);
+    window.removeEventListener("storage", handleStorage);
+    window.removeEventListener(THEME_EVENT, onStoreChange);
+  };
+}
+
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light");
+  const theme = useSyncExternalStore(subscribe, getPreferredTheme, () => "light");
 
   useEffect(() => {
-    const initialTheme = getPreferredTheme();
-    setTheme(initialTheme);
-    document.documentElement.classList.toggle("dark", initialTheme === "dark");
-  }, []);
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
 
   function toggleTheme() {
     const nextTheme: Theme = theme === "dark" ? "light" : "dark";
-    setTheme(nextTheme);
     document.documentElement.classList.toggle("dark", nextTheme === "dark");
     window.localStorage.setItem("theme", nextTheme);
+    window.dispatchEvent(new Event(THEME_EVENT));
   }
 
   return (

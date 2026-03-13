@@ -6,15 +6,15 @@ export function SiteFooter() {
 
   return (
     <footer className="footer">
-      <div className="footer-actions">
-        <a className="btn btn-ghost" href={`mailto:${personal.email}`}>
-          <Mail size={16} /> Email
+      <div className="footer-links">
+        <a className="footer-link" href={`mailto:${personal.email}`}>
+          <Mail size={15} /> Email
         </a>
-        <a className="btn btn-ghost" href={personal.github} target="_blank" rel="noreferrer">
-          <Github size={16} /> GitHub
+        <a className="footer-link" href={personal.github} target="_blank" rel="noreferrer">
+          <Github size={15} /> GitHub
         </a>
-        <a className="btn btn-ghost" href={personal.linkedin} target="_blank" rel="noreferrer">
-          <Linkedin size={16} /> LinkedIn
+        <a className="footer-link" href={personal.linkedin} target="_blank" rel="noreferrer">
+          <Linkedin size={15} /> LinkedIn
         </a>
       </div>
       <span>

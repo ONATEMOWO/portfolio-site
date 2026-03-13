@@ -9,6 +9,8 @@ export const portfolioData = {
     linkedin: "https://linkedin.com/in/foluso-onatemowo",
     resume: "/resume.pdf",
     location: "Nashville, TN",
+    availability:
+      "Open to software engineering internships, backend/product engineering collaborations, and applied ML research opportunities.",
   },
   focusAreas: [
     "Backend + data systems",
@@ -162,6 +164,12 @@ export const portfolioData = {
       summary: "Expanded GraphQL support and tenant features for backend developers.",
       tech: ["TypeScript", "Node.js", "GraphQL", "Firebase Emulator", "Mocha/Chai"],
       link: "https://github.com/firebase/firebase-admin-node",
+      role: "Associate Software Developer Intern",
+      impact: [
+        "Shipped GraphQL query and mutation support for backend developers using Firebase Data Connect.",
+        "Reduced setup boilerplate by roughly 25% through refactoring and tenant feature improvements.",
+        "Added 30+ tests with emulator-backed coverage to protect SDK reliability.",
+      ],
       caseStudy: {
         context: "Firebase Data Connect needed GraphQL parity between client and admin SDKs.",
         challenge: "Add GraphQL features while keeping Admin SDK onboarding simple.",
@@ -176,6 +184,12 @@ export const portfolioData = {
       summary: "Multi-screen rideshare experience with live maps, payments, and auth.",
       tech: ["React Native", "Expo", "TypeScript", "Zustand", "Stripe", "PostgreSQL"],
       link: "https://github.com/folutek/uber-clone",
+      role: "Builder",
+      impact: [
+        "Delivered an end-to-end mobile experience with auth, live maps, and payments.",
+        "Kept cross-platform UX consistent across the core ride-booking flow.",
+        "Combined state management, checkout, and geolocation without sacrificing speed.",
+      ],
       caseStudy: {
         context: "Demonstrate real-time, cross-platform mobile delivery end to end.",
         challenge: "Combine geolocation, payments, and auth without degrading UX.",
@@ -190,6 +204,12 @@ export const portfolioData = {
       summary: "Hybrid CNN + GRU model to detect attacks across smart-grid networks.",
       tech: ["Python", "PyTorch", "NumPy", "Pandas", "Matplotlib"],
       link: "https://github.com/folutek",
+      role: "ML Research Intern",
+      impact: [
+        "Built a hybrid CNN + GRU model across 100,000+ smart-grid endpoints.",
+        "Improved response time by 40% and accuracy by 25% over baseline approaches.",
+        "Turned the research output into visuals that informed security priorities.",
+      ],
       caseStudy: {
         context: "Smart-grid operators needed faster DDoS detection from large datasets.",
         challenge: "Improve detection accuracy without slowing training or inference.",
@@ -204,6 +224,12 @@ export const portfolioData = {
       summary: "Hackathon banking app with live transactions and multi-bank visibility.",
       tech: ["Next.js", "Tailwind CSS", "Plaid", "PostgreSQL", "Sentry"],
       link: "https://github.com/folutek",
+      role: "Builder",
+      impact: [
+        "Connected live financial account data into a responsive dashboard experience.",
+        "Integrated monitoring and real-time visibility to improve product reliability.",
+        "Balanced speed of delivery with secure handling of financial workflows.",
+      ],
       caseStudy: {
         context: "Provide a secure, real-time view of multi-bank transactions.",
         challenge: "Sync accounts while keeping performance and security tight.",

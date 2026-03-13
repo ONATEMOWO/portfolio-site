@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { ArrowUpRight, Github, Linkedin, Mail, Sparkles } from "lucide-react";
+import { CopyEmailButton } from "@/components/copy-email-button";
 import { HeroParallax } from "@/components/hero-parallax";
 import { ProjectsGrid } from "@/components/projects-grid";
 import { SiteFooter } from "@/components/site-footer";
@@ -17,7 +18,8 @@ export default function Home() {
     approach,
     principles,
     timeline,
-    now,
+    education,
+    recognition,
     experience,
     leadership,
     metrics,
@@ -26,15 +28,60 @@ export default function Home() {
   const skillTicker = skills.flatMap((group) => group.items);
   const featuredProject = projects[0];
   const remainingProjects = projects.slice(1);
+  const heroProofPoints = summaryPoints.slice(0, 2);
+  const educationLine = education[0];
   const initials = personal.name
     .split(" ")
     .filter(Boolean)
     .slice(0, 3)
     .map((part) => part[0]?.toUpperCase())
     .join("");
+  const capabilityCards = [
+    {
+      eyebrow: "Product engineering",
+      title: "Comfortable shipping in large codebases",
+      text: "Shipped developer-facing GraphQL and tenant improvements inside the Firebase Admin Node.js SDK with emulator-backed validation.",
+      bullets: ["Google - Firebase Data Connect", "30+ tests added", "Boilerplate reduced by ~25%"],
+    },
+    {
+      eyebrow: "Applied ML",
+      title: "Research work tied to measurable outcomes",
+      text: "Built and tuned a CNN + GRU model for smart-grid DDoS detection with a focus on both accuracy and response speed.",
+      bullets: ["100k+ endpoints analyzed", "25% stronger performance", "40% faster response time"],
+    },
+    {
+      eyebrow: "End-to-end delivery",
+      title: "Moves between frontend polish and backend systems",
+      text: "Builds mobile and web products that connect strong UX with payments, auth, maps, and data pipelines.",
+      bullets: ["React Native + Next.js", "Stripe, Plaid, GraphQL", "Human-centered performance"],
+    },
+  ];
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: personal.name,
+    jobTitle: personal.role,
+    description: personal.bio,
+    email: personal.email,
+    url: personal.linkedin,
+    sameAs: [personal.github, personal.linkedin],
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: personal.location,
+    },
+    alumniOf: education.map((item) => ({
+      "@type": "CollegeOrUniversity",
+      name: item.school,
+    })),
+  };
 
   return (
     <main id="main-content" className="shell">
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
       <SiteNav />
 
       <HeroParallax>
@@ -42,14 +89,32 @@ export default function Home() {
           <span className="kicker">
             <Sparkles size={14} /> Full-stack engineering intern + ML research
           </span>
+          <div className="hero-meta">
+            <span>{personal.location}</span>
+            {educationLine && <span>{educationLine.school} · {educationLine.program}</span>}
+          </div>
           <h1 className="hero-title">
             Building <span className="accent-text">secure</span>, data-driven systems and real-time products.
           </h1>
           <p className="hero-sub measure">{personal.bio}</p>
+          <ul className="hero-proof-list" aria-label="Quick proof points">
+            {heroProofPoints.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <div className="credential-row" aria-label="Recognition">
+            {recognition.map((item) => (
+              <span key={item} className="credential-pill">
+                {item}
+              </span>
+            ))}
+          </div>
+          <p className="availability-note">{personal.availability}</p>
           <div className="hero-actions">
             <a className="btn btn-primary" href={`mailto:${personal.email}`}>
               <Mail size={16} /> {personal.email}
             </a>
+            <CopyEmailButton email={personal.email} />
             <a className="btn btn-ghost" href={personal.resume} target="_blank" rel="noreferrer">
               Resume <ArrowUpRight size={16} />
             </a>
@@ -61,26 +126,42 @@ export default function Home() {
             <a className="mini-link" href={personal.linkedin} target="_blank" rel="noreferrer">
               <Linkedin size={16} /> LinkedIn
             </a>
+            <a className="mini-link" href="#projects">
+              <ArrowUpRight size={16} /> Selected work
+            </a>
           </div>
         </div>
 
         <div className="hero-visual">
-          <div className="monogram-card reveal" style={{ "--delay": "160ms" } as CSSProperties}>
-            <p className="meta">Signature mark</p>
-            <div className="monogram">{initials}</div>
-            <p className="section-note">{personal.role}</p>
-          </div>
-          <div className="glass-card reveal" style={{ "--delay": "220ms" } as CSSProperties}>
-            <p className="meta">At a glance</p>
-            <ul className="list">
-              {summaryPoints.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
+          <div className="monogram-card snapshot-card reveal" style={{ "--delay": "160ms" } as CSSProperties}>
+            <div className="snapshot-head">
+              <div className="signature-mark">
+                <div className="monogram">{initials}</div>
+              </div>
+              <div>
+                <p className="meta">Career snapshot</p>
+                <p className="card-title">{personal.role}</p>
+                {educationLine && (
+                  <p className="section-note">
+                    {educationLine.school} · {educationLine.program}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="snapshot-facts">
+              <div className="fact-block">
+                <span className="fact-label">Based in</span>
+                <span className="fact-value">{personal.location}</span>
+              </div>
+              <div className="fact-block">
+                <span className="fact-label">Primary lane</span>
+                <span className="fact-value">{focusAreas[0]}</span>
+              </div>
+            </div>
           </div>
           <div
             className="glass-card accent reveal"
-            style={{ "--delay": "280ms" } as CSSProperties}
+            style={{ "--delay": "220ms" } as CSSProperties}
           >
             <p className="meta">Focus areas</p>
             <div className="chip-list">
@@ -91,21 +172,14 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <div className="glass-card now-card reveal" style={{ "--delay": "340ms" } as CSSProperties}>
-            <p className="meta">Right now</p>
-            <div className="now-list">
-              {now.map((item) => (
-                <div key={item.label} className="now-item">
-                  <span className="now-label">{item.label}</span>
-                  <span className="now-value">{item.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </HeroParallax>
 
       <section className="section">
+        <div className="section-head reveal" style={{ "--delay": "120ms" } as CSSProperties}>
+          <h2 className="section-title">Proof in Numbers</h2>
+          <span className="section-note">Signals that matter when someone scans the site quickly.</span>
+        </div>
         <div className="metrics-grid">
           {metrics.map((item, index) => (
             <div
@@ -115,6 +189,31 @@ export default function Home() {
             >
               <div className="metric-value">{item.value}</div>
               <div className="metric-label">{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-head reveal" style={{ "--delay": "120ms" } as CSSProperties}>
+          <h2 className="section-title">What Teams Can Count On</h2>
+          <span className="section-note">The strongest portfolio signal is consistent, explainable impact.</span>
+        </div>
+        <div className="grid grid-3" style={{ marginTop: 24 }}>
+          {capabilityCards.map((item, index) => (
+            <div
+              key={item.title}
+              className="audience-card reveal"
+              style={{ "--delay": `${160 + index * 80}ms` } as CSSProperties}
+            >
+              <p className="meta">{item.eyebrow}</p>
+              <h3 className="card-title">{item.title}</h3>
+              <p className="section-note">{item.text}</p>
+              <ul className="audience-list">
+                {item.bullets.map((bullet) => (
+                  <li key={bullet}>{bullet}</li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
@@ -156,6 +255,10 @@ export default function Home() {
                 <p className="section-note">{featuredProject.caseStudy.solution}</p>
               </div>
               <div>
+                <p className="meta">Role</p>
+                <p className="section-note">{featuredProject.role}</p>
+              </div>
+              <div>
                 <p className="meta">Outcome</p>
                 <p className="section-note">{featuredProject.caseStudy.outcome}</p>
               </div>
@@ -169,6 +272,14 @@ export default function Home() {
                   ))}
                 </div>
               </div>
+              <div>
+                <p className="meta">Evidence</p>
+                <ul className="list compact-list">
+                  {featuredProject.impact.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </section>
@@ -176,8 +287,8 @@ export default function Home() {
 
       <section id="about" className="section">
         <div className="section-head reveal" style={{ "--delay": "120ms" } as CSSProperties}>
-          <h2 className="section-title">Signature</h2>
-          <span className="section-note">Journey + principles that shape my work.</span>
+          <h2 className="section-title">Journey & Principles</h2>
+          <span className="section-note">The path and operating principles behind how I deliver work.</span>
         </div>
         <div className="signature-grid" style={{ marginTop: 24 }}>
           <div className="timeline-card signature-sticky reveal" style={{ "--delay": "160ms" } as CSSProperties}>
@@ -248,7 +359,7 @@ export default function Home() {
 
       <section className="section">
         <div className="section-head reveal" style={{ "--delay": "120ms" } as CSSProperties}>
-          <h2 className="section-title">Community</h2>
+          <h2 className="section-title">Leadership & Community</h2>
           <span className="section-note">Teams and communities I learn with.</span>
         </div>
         <div className="grid grid-2" style={{ marginTop: 24 }}>
@@ -281,8 +392,8 @@ export default function Home() {
 
       <section className="section">
         <div className="section-head reveal" style={{ "--delay": "120ms" } as CSSProperties}>
-          <h2 className="section-title">How I Work</h2>
-          <span className="section-note">A concise look at my delivery process.</span>
+          <h2 className="section-title">How I Work With Teams</h2>
+          <span className="section-note">From framing the problem to validating the result.</span>
         </div>
         <div className="process-grid" style={{ marginTop: 24 }}>
           {approach.map((item, index) => (
@@ -338,13 +449,15 @@ export default function Home() {
           <div>
             <h2 className="cta-title">Let&apos;s build something meaningful.</h2>
             <p className="cta-text">
-              Open to collaborating on ambitious products, research, and developer tooling.
+              Open to ambitious product engineering, developer tooling, and applied ML collaboration.
             </p>
+            <p className="availability-note">{personal.availability}</p>
           </div>
           <div className="cta-actions">
             <a className="btn btn-primary" href={`mailto:${personal.email}`}>
               <Mail size={16} /> {personal.email}
             </a>
+            <CopyEmailButton email={personal.email} />
             <a className="btn btn-ghost" href={personal.github} target="_blank" rel="noreferrer">
               <Github size={16} /> GitHub
             </a>
